@@ -6,7 +6,7 @@ import json
 import time
 from pathlib import Path
 from threading import Event, Thread
-from typing import Any, Dict, List, Union
+from typing import Any, Union
 
 import zmq
 
@@ -31,7 +31,7 @@ class MessagePublisher:
     def __init__(self, bind_address: str = "tcp://*:5555"):
         """
         Initialize the publisher.
-        
+
         Args:
             bind_address: ZeroMQ bind address (default: tcp://*:5555)
         """
@@ -45,10 +45,10 @@ class MessagePublisher:
         # Give the socket time to bind
         time.sleep(0.1)
 
-    def publish_message(self, message: Dict[str, Any], topic: str = "tactical") -> None:
+    def publish_message(self, message: dict[str, Any], topic: str = "tactical") -> None:
         """
         Publish a single normalized message.
-        
+
         Args:
             message: Normalized message dictionary
             topic: Message topic (default: "tactical")
@@ -67,11 +67,11 @@ class MessagePublisher:
     def publish_from_file(self, file_path: Union[str, Path], format_type: str) -> int:
         """
         Parse and publish messages from a file.
-        
+
         Args:
             file_path: Path to the input file
             format_type: Message format ("cot" or "vmf")
-            
+
         Returns:
             Number of messages published
         """
@@ -99,16 +99,16 @@ class MessagePublisher:
 
         return count
 
-    def publish_from_files(self, file_paths: List[Union[str, Path]], format_type: str,
+    def publish_from_files(self, file_paths: list[Union[str, Path]], format_type: str,
                           delay: float = 1.0) -> int:
         """
         Parse and publish messages from multiple files with delay.
-        
+
         Args:
             file_paths: List of file paths
             format_type: Message format ("cot" or "vmf")
             delay: Delay between files in seconds
-            
+
         Returns:
             Total number of messages published
         """
@@ -126,11 +126,11 @@ class MessagePublisher:
 
         return total_count
 
-    def start_streaming(self, file_paths: List[Union[str, Path]], format_type: str,
+    def start_streaming(self, file_paths: list[Union[str, Path]], format_type: str,
                        delay: float = 1.0) -> None:
         """
         Start streaming messages in a separate thread.
-        
+
         Args:
             file_paths: List of file paths to stream
             format_type: Message format ("cot" or "vmf")
@@ -186,10 +186,10 @@ class MessagePublisher:
 def create_publisher(bind_address: str = "tcp://*:5555") -> MessagePublisher:
     """
     Factory function to create a message publisher.
-    
+
     Args:
         bind_address: ZeroMQ bind address
-        
+
     Returns:
         Configured MessagePublisher instance
     """

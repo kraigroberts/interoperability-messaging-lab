@@ -12,7 +12,7 @@ from .services import *
 __all__ = [
     "app",
     "MessageFormat",
-    "OutputFormat", 
+    "OutputFormat",
     "ParseRequest",
     "ParseResponse",
     "StreamRequest",

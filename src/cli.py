@@ -29,7 +29,7 @@ except ImportError:
 def cmd_parse(args: argparse.Namespace) -> None:
     """Parse and normalize tactical message files."""
     print(f"[blue]Parsing[/blue] {args.format.upper()} message from {args.infile}")
-    
+
     in_path = Path(args.infile)
     if not in_path.exists():
         raise FileNotFoundError(f"Input not found: {in_path}")
@@ -66,28 +66,28 @@ def cmd_parse(args: argparse.Namespace) -> None:
 def cmd_pcap_decode(args: argparse.Namespace) -> None:
     """Decode PCAP file and extract message payloads."""
     print(f"[blue]Decoding[/blue] PCAP file: {args.pcap}")
-    
+
     pcap_path = Path(args.pcap)
     if not pcap_path.exists():
         raise FileNotFoundError(f"PCAP file not found: {pcap_path}")
-    
+
     out_dir = Path(args.out)
     print(f"[blue]Output[/blue] directory: {out_dir}")
-    
+
     # Create output directory
     out_dir.mkdir(parents=True, exist_ok=True)
-    print(f"[blue]Created[/blue] output directory")
-    
+    print("[blue]Created[/blue] output directory")
+
     # Decode PCAP
     print("[blue]Processing[/blue] PCAP file and extracting payloads...")
     count = decode_pcap_payloads(pcap_path, out_dir)
-    
+
     if count > 0:
         print(f"[green]✅ Successfully decoded[/green] {count} payload(s)")
         print(f"[green]   →[/green] Output directory: {out_dir}")
         print(f"[green]   →[/green] Files created: {len(list(out_dir.glob('*')))}")
     else:
-        print(f"[yellow]⚠️  No payloads found[/yellow] in PCAP file")
+        print("[yellow]⚠️  No payloads found[/yellow] in PCAP file")
         print(f"[yellow]   →[/yellow] Output directory: {out_dir}")
 
 
@@ -96,10 +96,10 @@ def cmd_stream_pub(args: argparse.Namespace) -> None:
     print(f"[blue]Starting[/blue] ZeroMQ publisher on {args.bind}")
     print(f"[blue]Format[/blue]: {args.format.upper()}")
     print(f"[blue]Files[/blue]: {len(args.files)} file(s) specified")
-    
+
     try:
         publisher = create_publisher(args.bind)
-        print(f"[green]✅ Publisher[/green] initialized successfully")
+        print("[green]✅ Publisher[/green] initialized successfully")
 
         if args.stream:
             # Start continuous streaming
@@ -128,23 +128,23 @@ def cmd_stream_pub(args: argparse.Namespace) -> None:
 
     except Exception as e:
         print(f"[red]❌ Error[/red]: {e}")
-        print(f"[red]   →[/red] Check file paths and network configuration")
+        print("[red]   →[/red] Check file paths and network configuration")
 
 
 def cmd_stream_sub(args: argparse.Namespace) -> None:
     """Subscribe to ZeroMQ PUB socket."""
-    print(f"[blue]Starting[/blue] ZeroMQ subscriber")
+    print("[blue]Starting[/blue] ZeroMQ subscriber")
     print(f"[blue]Connect[/blue]: {args.connect}")
     print(f"[blue]Topics[/blue]: {', '.join(args.topics)}")
-    
+
     try:
         subscriber = create_subscriber(args.connect, args.topics)
-        print(f"[green]✅ Subscriber[/green] initialized successfully")
+        print("[green]✅ Subscriber[/green] initialized successfully")
 
         if args.timeout:
             print(f"[blue]Receiving[/blue] messages with {args.timeout}s timeout...")
             subscriber.start_receiving(args.timeout)
-            print(f"[green]✅ Reception[/green] completed (timeout reached)")
+            print("[green]✅ Reception[/green] completed (timeout reached)")
         else:
             print("[blue]Receiving[/blue] messages indefinitely...")
             print("[yellow]Press Ctrl+C to stop receiving[/yellow]")
@@ -152,7 +152,7 @@ def cmd_stream_sub(args: argparse.Namespace) -> None:
 
     except Exception as e:
         print(f"[red]❌ Error[/red]: {e}")
-        print(f"[red]   →[/red] Check network connection and publisher status")
+        print("[red]   →[/red] Check network connection and publisher status")
         subscriber.close()
         print("[red]❌ Subscriber[/red] closed due to error")
 
@@ -160,16 +160,17 @@ def cmd_stream_sub(args: argparse.Namespace) -> None:
 def cmd_api(args: argparse.Namespace) -> None:
     """Start REST API server."""
     print(f"[blue]Starting[/blue] REST API server on {args.host}:{args.port}")
-    
+
     try:
         import uvicorn
-        from src.api.app import app
-        
-        print(f"[green]✅ API[/green] server initialized successfully")
+
+
+
+        print("[green]✅ API[/green] server initialized successfully")
         print(f"[blue]Documentation[/blue]: http://{args.host}:{args.port}/docs")
         print(f"[blue]Health Check[/blue]: http://{args.host}:{args.port}/health")
-        print(f"[yellow]Press Ctrl+C to stop the server[/yellow]")
-        
+        print("[yellow]Press Ctrl+C to stop the server[/yellow]")
+
         # Start server
         uvicorn.run(
             "src.api.app:app",
@@ -178,10 +179,10 @@ def cmd_api(args: argparse.Namespace) -> None:
             reload=args.reload,
             log_level="info"
         )
-        
+
     except ImportError as e:
         print(f"[red]❌ Error[/red]: Missing dependency - {e}")
-        print(f"[red]   →[/red] Install with: pip install fastapi uvicorn[standard]")
+        print("[red]   →[/red] Install with: pip install fastapi uvicorn[standard]")
     except Exception as e:
         print(f"[red]❌ Error[/red]: {e}")
 
@@ -190,11 +191,11 @@ def cmd_status(args: argparse.Namespace) -> None:
     """Show system status and configuration."""
     print("[blue]Interoperability Messaging Lab - System Status[/blue]")
     print("=" * 60)
-    
+
     # Version info
-    print(f"[green]Version[/green]: interop-cli 0.1.0")
+    print("[green]Version[/green]: interop-cli 0.1.0")
     print(f"[green]Python[/green]: {sys.version.split()[0]}")
-    
+
     # Check dependencies
     print("\n[blue]Dependencies[/blue]:")
     try:
@@ -202,25 +203,25 @@ def cmd_status(args: argparse.Namespace) -> None:
         print(f"[green]✅ lxml[/green]: {lxml.__version__}")
     except ImportError:
         print("[red]❌ lxml[/red]: Not installed")
-    
+
     try:
         import scapy
         print(f"[green]✅ scapy[/green]: {scapy.__version__}")
     except ImportError:
         print("[red]❌ scapy[/red]: Not installed")
-    
+
     try:
         import zmq
         print(f"[green]✅ pyzmq[/green]: {zmq.__version__}")
     except ImportError:
         print("[red]❌ pyzmq[/red]: Not installed")
-    
+
     try:
         import jsonschema
         print(f"[green]✅ jsonschema[/green]: {jsonschema.__version__}")
     except ImportError:
         print("[red]❌ jsonschema[/red]: Not installed")
-    
+
     # Check sample data
     print("\n[blue]Sample Data[/blue]:")
     sample_dir = Path("data/samples")
@@ -231,7 +232,7 @@ def cmd_status(args: argparse.Namespace) -> None:
             print(f"   → {sample.name}")
     else:
         print("[yellow]⚠️  Samples[/yellow]: No sample data directory found")
-    
+
     # Check schema
     print("\n[blue]Schema[/blue]:")
     schema_file = Path("schema/normalized_message.schema.json")
@@ -240,7 +241,7 @@ def cmd_status(args: argparse.Namespace) -> None:
         print(f"   → Size: {schema_file.stat().st_size} bytes")
     else:
         print("[red]❌ Schema[/red]: Schema file not found")
-    
+
     print("\n[green]✅ Status check complete[/green]")
 
 
@@ -250,11 +251,11 @@ def cmd_interactive(args: argparse.Namespace) -> None:
     print("=" * 60)
     print("Type 'help' for available commands, 'quit' to exit")
     print("=" * 60)
-    
+
     while True:
         try:
             command = input("\n[blue]interop>[/blue] ").strip()
-            
+
             if not command:
                 continue
             elif command.lower() in ['quit', 'exit', 'q']:
@@ -271,7 +272,7 @@ def cmd_interactive(args: argparse.Namespace) -> None:
             else:
                 print(f"[yellow]Unknown command: {command}[/yellow]")
                 print("Type 'help' for available commands")
-                
+
         except KeyboardInterrupt:
             print("\n[green]Goodbye![/green]")
             break
@@ -308,7 +309,7 @@ def show_schema():
     print("\n[blue]Schema Information:[/blue]")
     schema_file = Path("schema/normalized_message.schema.json")
     if schema_file.exists():
-        with open(schema_file, 'r') as f:
+        with open(schema_file) as f:
             schema = json.load(f)
         print(f"  Title: {schema.get('title', 'N/A')}")
         print(f"  Version: {schema.get('$schema', 'N/A')}")
@@ -345,20 +346,20 @@ For more information, visit: https://github.com/kraigroberts/interoperability-me
     )
     # Add version and help options
     ap.add_argument("--version", action="version", version="interop-cli 0.1.0")
-    
+
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     # parse subcommand
     ap_parse = sub.add_parser("parse", help="Parse and normalize tactical message files")
-    ap_parse.add_argument("format", choices=["cot", "vmf"], 
+    ap_parse.add_argument("format", choices=["cot", "vmf"],
                          help="Message format: 'cot' for XML, 'vmf' for binary")
-    ap_parse.add_argument("--in", dest="infile", required=True, 
+    ap_parse.add_argument("--in", dest="infile", required=True,
                          help="Input file path (supports glob patterns)")
-    ap_parse.add_argument("--out", dest="out", 
+    ap_parse.add_argument("--out", dest="out",
                          help="Output file path (if not specified, prints to stdout)")
-    ap_parse.add_argument("--out-format", dest="out_format", 
+    ap_parse.add_argument("--out-format", dest="out_format",
                          choices=["json", "ndjson", "csv"],
-                         default="json", 
+                         default="json",
                          help="Output format: json (default), ndjson, or csv")
     ap_parse.set_defaults(func=cmd_parse)
 
@@ -367,9 +368,9 @@ For more information, visit: https://github.com/kraigroberts/interoperability-me
     pcap_sub = ap_pcap.add_subparsers(dest="pcmd", required=True)
 
     ap_pcap_decode = pcap_sub.add_parser("decode", help="Decode PCAP file and extract message payloads")
-    ap_pcap_decode.add_argument("--pcap", required=True, 
+    ap_pcap_decode.add_argument("--pcap", required=True,
                                help="PCAP file path (supports .pcap, .pcapng, and .txt files)")
-    ap_pcap_decode.add_argument("--out", required=True, 
+    ap_pcap_decode.add_argument("--out", required=True,
                                help="Output directory path (will be created if it doesn't exist)")
     ap_pcap_decode.set_defaults(func=cmd_pcap_decode)
 
@@ -379,25 +380,25 @@ For more information, visit: https://github.com/kraigroberts/interoperability-me
 
     # stream pub subcommand
     ap_stream_pub = stream_sub.add_parser("pub", help="Publish messages to ZeroMQ PUB socket")
-    ap_stream_pub.add_argument("--in", dest="files", nargs="+", required=True, 
+    ap_stream_pub.add_argument("--in", dest="files", nargs="+", required=True,
                               help="Input file paths (supports glob patterns)")
-    ap_stream_pub.add_argument("--format", choices=["cot", "vmf"], required=True, 
+    ap_stream_pub.add_argument("--format", choices=["cot", "vmf"], required=True,
                               help="Message format: 'cot' for XML, 'vmf' for binary")
-    ap_stream_pub.add_argument("--bind", default="tcp://*:5555", 
+    ap_stream_pub.add_argument("--bind", default="tcp://*:5555",
                               help="Bind address for ZeroMQ socket (default: tcp://*:5555)")
-    ap_stream_pub.add_argument("--delay", type=float, default=1.0, 
+    ap_stream_pub.add_argument("--delay", type=float, default=1.0,
                               help="Delay between messages in seconds (default: 1.0)")
-    ap_stream_pub.add_argument("--stream", action="store_true", 
+    ap_stream_pub.add_argument("--stream", action="store_true",
                               help="Enable continuous streaming mode (loops through files)")
     ap_stream_pub.set_defaults(func=cmd_stream_pub)
 
     # stream sub subcommand
     ap_stream_sub = stream_sub.add_parser("sub", help="Subscribe to ZeroMQ PUB socket")
-    ap_stream_sub.add_argument("--connect", default="tcp://localhost:5555", 
+    ap_stream_sub.add_argument("--connect", default="tcp://localhost:5555",
                               help="Connect address for ZeroMQ socket (default: tcp://localhost:5555)")
-    ap_stream_sub.add_argument("--topics", nargs="*", default=["tactical"], 
+    ap_stream_sub.add_argument("--topics", nargs="*", default=["tactical"],
                               help="Topics to subscribe to (default: tactical)")
-    ap_stream_sub.add_argument("--timeout", type=float, 
+    ap_stream_sub.add_argument("--timeout", type=float,
                               help="Timeout in seconds (optional, runs indefinitely if not specified)")
     # api subcommand
     ap_api = sub.add_parser("api", help="Start REST API server")

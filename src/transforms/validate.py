@@ -4,7 +4,6 @@ Schema validation for normalized tactical messages.
 
 import json
 from pathlib import Path
-from typing import Any, Dict
 
 try:
     from jsonschema import ValidationError, validate
@@ -16,7 +15,7 @@ except ImportError:
     Draft202012Validator = None
 
 
-def _load_schema() -> Dict[str, Any]:
+def _load_schema() -> dict:
     """Load the normalized message schema from the schema directory."""
     schema_path = Path(__file__).parent.parent.parent / "schema" / "normalized_message.schema.json"
 
@@ -27,16 +26,16 @@ def _load_schema() -> Dict[str, Any]:
         return json.load(f)
 
 
-def validate_normalized(obj: Dict[str, Any]) -> bool:
+def validate_normalized(obj: dict) -> bool:
     """
     Validate a normalized message object against the schema.
-    
+
     Args:
         obj: The normalized message object to validate
-        
+
     Returns:
         True if valid, raises ValidationError if invalid
-        
+
     Raises:
         ValidationError: If the object doesn't match the schema
         ImportError: If jsonschema is not available
@@ -49,13 +48,13 @@ def validate_normalized(obj: Dict[str, Any]) -> bool:
     return True
 
 
-def validate_and_raise(obj: Dict[str, Any]) -> None:
+def validate_and_raise(obj: dict) -> None:
     """
     Validate a normalized message object and raise an exception if invalid.
-    
+
     Args:
         obj: The normalized message object to validate
-        
+
     Raises:
         ValidationError: If the object doesn't match the schema
         ImportError: If jsonschema is not available
@@ -63,13 +62,13 @@ def validate_and_raise(obj: Dict[str, Any]) -> None:
     validate_normalized(obj)
 
 
-def is_valid(obj: Dict[str, Any]) -> bool:
+def is_valid(obj: dict) -> bool:
     """
     Check if a normalized message object is valid without raising exceptions.
-    
+
     Args:
         obj: The normalized message object to validate
-        
+
     Returns:
         True if valid, False if invalid or validation unavailable
     """

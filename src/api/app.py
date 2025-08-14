@@ -4,28 +4,34 @@ Provides REST API endpoints for message parsing, streaming, and PCAP processing.
 """
 
 import base64
+import os
+import tempfile
 import time
 import uuid
+from contextlib import asynccontextmanager
 from datetime import datetime
-from typing import Dict, Any, List
 from pathlib import Path
-import tempfile
-import os
 
-from fastapi import FastAPI, HTTPException, Request, BackgroundTasks
+from fastapi import BackgroundTasks, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
-from contextlib import asynccontextmanager
+
+from .middleware import RequestIdMiddleware, TimingMiddleware
 
 # Import our models and business logic
 from .models import (
-    ParseRequest, ParseResponse, StreamRequest, StreamResponse,
-    PCAPRequest, PCAPResponse, HealthResponse, ErrorResponse, MessageStats
+    ErrorResponse,
+    HealthResponse,
+    MessageStats,
+    ParseRequest,
+    ParseResponse,
+    PCAPRequest,
+    PCAPResponse,
+    StreamRequest,
+    StreamResponse,
 )
-from .services import MessageService, StreamingService, PCAPService
-from .middleware import RequestIdMiddleware, TimingMiddleware
-
+from .services import MessageService, PCAPService, StreamingService
 
 # Global state for tracking
 start_time = time.time()
@@ -75,7 +81,7 @@ streaming_service = StreamingService()
 pcap_service = PCAPService()
 
 
-@app.get("/", response_model=Dict[str, str])
+@app.get("/", response_model=dict[str, str])
 async def root():
     """Root endpoint with API information."""
     return {
@@ -97,25 +103,25 @@ async def health_check():
         dependencies["lxml"] = "healthy"
     except ImportError:
         dependencies["lxml"] = "unavailable"
-    
+
     try:
         import scapy
         dependencies["scapy"] = "healthy"
     except ImportError:
         dependencies["scapy"] = "unavailable"
-    
+
     try:
         import zmq
         dependencies["pyzmq"] = "healthy"
     except ImportError:
         dependencies["pyzmq"] = "unavailable"
-    
+
     try:
         import jsonschema
         dependencies["jsonschema"] = "healthy"
     except ImportError:
         dependencies["jsonschema"] = "unavailable"
-    
+
     return HealthResponse(
         status="healthy",
         version="0.1.0",
@@ -128,11 +134,11 @@ async def health_check():
 async def parse_message(request: ParseRequest):
     """Parse and normalize a tactical message."""
     start_time = time.time()
-    
+
     try:
         # Decode base64 content
         content_bytes = base64.b64decode(request.content)
-        
+
         # Parse message based on format
         if request.format.value == "cot":
             parsed = message_service.parse_cot(content_bytes)
@@ -142,18 +148,18 @@ async def parse_message(request: ParseRequest):
             message_stats["vmf_messages"] += 1
         else:
             raise HTTPException(status_code=400, detail=f"Unsupported format: {request.format}")
-        
+
         # Normalize message
         normalized = message_service.normalize_message(parsed)
-        
+
         # Convert to requested output format
         output_data = message_service.convert_format(normalized, request.output_format.value)
-        
+
         # Update statistics
         processing_time = (time.time() - start_time) * 1000
         message_stats["total_messages"] += 1
         message_stats["processing_times"].append(processing_time)
-        
+
         return ParseResponse(
             success=True,
             message=f"Successfully parsed {request.format.value.upper()} message",
@@ -161,7 +167,7 @@ async def parse_message(request: ParseRequest):
             output_format=request.output_format,
             processing_time_ms=processing_time
         )
-        
+
     except Exception as e:
         message_stats["failed_messages"] += 1
         raise HTTPException(status_code=400, detail=str(e))
@@ -173,10 +179,10 @@ async def stream_message(request: StreamRequest, background_tasks: BackgroundTas
     try:
         # Decode base64 content
         content_bytes = base64.b64decode(request.content)
-        
+
         # Generate unique message ID
         message_id = str(uuid.uuid4())
-        
+
         # Parse and normalize message
         if request.format.value == "cot":
             parsed = message_service.parse_cot(content_bytes)
@@ -184,9 +190,9 @@ async def stream_message(request: StreamRequest, background_tasks: BackgroundTas
             parsed = message_service.parse_vmf(content_bytes)
         else:
             raise HTTPException(status_code=400, detail=f"Unsupported format: {request.format}")
-        
+
         normalized = message_service.normalize_message(parsed)
-        
+
         # Stream message in background
         background_tasks.add_task(
             streaming_service.publish_message,
@@ -194,14 +200,14 @@ async def stream_message(request: StreamRequest, background_tasks: BackgroundTas
             request.topic,
             request.delay_ms
         )
-        
+
         return StreamResponse(
             success=True,
             message=f"Message queued for streaming to topic '{request.topic}'",
             topic=request.topic,
             message_id=message_id
         )
-        
+
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -210,25 +216,25 @@ async def stream_message(request: StreamRequest, background_tasks: BackgroundTas
 async def process_pcap(request: PCAPRequest):
     """Process PCAP content and extract payloads."""
     start_time = time.time()
-    
+
     try:
         # Decode base64 content
         content_bytes = base64.b64decode(request.content)
-        
+
         # Create temporary file for PCAP processing
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pcap") as temp_file:
             temp_file.write(content_bytes)
             temp_file_path = temp_file.name
-        
+
         try:
             # Process PCAP
             payloads = pcap_service.extract_payloads(temp_file_path)
-            
+
             # Convert to requested format
             output_data = pcap_service.convert_payloads(payloads, request.output_format.value)
-            
+
             processing_time = (time.time() - start_time) * 1000
-            
+
             return PCAPResponse(
                 success=True,
                 message=f"Successfully extracted {len(payloads)} payloads from PCAP",
@@ -236,11 +242,11 @@ async def process_pcap(request: PCAPRequest):
                 payloads=output_data,
                 processing_time_ms=processing_time
             )
-            
+
         finally:
             # Clean up temporary file
             os.unlink(temp_file_path)
-            
+
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -250,7 +256,7 @@ async def get_message_stats():
     """Get message processing statistics."""
     processing_times = message_stats["processing_times"]
     avg_time = sum(processing_times) / len(processing_times) if processing_times else 0.0
-    
+
     return MessageStats(
         total_messages=message_stats["total_messages"],
         cot_messages=message_stats["cot_messages"],
@@ -265,7 +271,7 @@ async def get_message_stats():
 async def global_exception_handler(request: Request, exc: Exception):
     """Global exception handler."""
     request_id = getattr(request.state, "request_id", "unknown")
-    
+
     return JSONResponse(
         status_code=500,
         content=ErrorResponse(

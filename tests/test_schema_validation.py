@@ -7,7 +7,12 @@ import pytest
 from src.parsers.cot_parser import parse_cot_xml
 from src.parsers.vmf_parser import parse_vmf_binary
 from src.transforms.normalize_schema import normalize_message
-from src.transforms.validate import is_valid, validate_and_raise, validate_normalized
+from src.transforms.validate import (
+    ValidationError,
+    is_valid,
+    validate_and_raise,
+    validate_normalized,
+)
 from tools.make_vmf_sample import make_sample
 
 
@@ -51,10 +56,10 @@ def test_invalid_schema_validation():
         # Missing: type, time, position
     }
 
-    with pytest.raises(Exception):  # ValidationError or similar
+    with pytest.raises((ValidationError, Exception)):  # ValidationError or similar
         validate_normalized(invalid_obj)
 
-    with pytest.raises(Exception):
+    with pytest.raises((ValidationError, Exception)):
         validate_and_raise(invalid_obj)
 
     assert is_valid(invalid_obj) is False
@@ -70,7 +75,7 @@ def test_invalid_source_format():
         "position": {"lat": 38.7, "lon": -77.2}
     }
 
-    with pytest.raises(Exception):
+    with pytest.raises((ValidationError, Exception)):
         validate_normalized(invalid_obj)
 
     assert is_valid(invalid_obj) is False
@@ -86,7 +91,7 @@ def test_invalid_schema_version():
         "position": {"lat": 38.7, "lon": -77.2}
     }
 
-    with pytest.raises(Exception):
+    with pytest.raises((ValidationError, Exception)):
         validate_normalized(invalid_obj)
 
     assert is_valid(invalid_obj) is False
@@ -103,7 +108,7 @@ def test_additional_properties_rejected():
         "extra_field": "should_not_be_allowed"  # Additional property
     }
 
-    with pytest.raises(Exception):
+    with pytest.raises((ValidationError, Exception)):
         validate_normalized(invalid_obj)
 
     assert is_valid(invalid_obj) is False

@@ -1,5 +1,5 @@
 import struct
-from typing import Any, Dict
+from typing import Any
 
 """
 Minimal VMF-like binary parser for demonstration and testing.
@@ -21,7 +21,7 @@ controlled formats. Replace with a real parser later if needed.
 _HEADER_FMT = "<4sHddQ"
 _HEADER_SIZE = struct.calcsize(_HEADER_FMT)
 
-def parse_vmf_binary(data: bytes) -> Dict[str, Any]:
+def parse_vmf_binary(data: bytes) -> dict[str, Any]:
     if len(data) < _HEADER_SIZE:
         raise ValueError(f"VMF sample too short: {len(data)} bytes (need {_HEADER_SIZE})")
 

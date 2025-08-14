@@ -4,7 +4,7 @@ ZeroMQ Subscriber for normalized tactical messages.
 
 import json
 from threading import Event, Thread
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Optional
 
 import zmq
 
@@ -18,7 +18,7 @@ class MessageSubscriber:
                  topics: Optional[list] = None):
         """
         Initialize the subscriber.
-        
+
         Args:
             connect_address: ZeroMQ connect address (default: tcp://localhost:5555)
             topics: List of topics to subscribe to (default: ["tactical"])
@@ -36,21 +36,21 @@ class MessageSubscriber:
         self.running = False
         self.stop_event = Event()
         self.message_count = 0
-        self.message_handler: Optional[Callable[[Dict[str, Any]], None]] = None
+        self.message_handler: Optional[Callable[[dict[str, Any]], None]] = None
 
-    def set_message_handler(self, handler: Callable[[Dict[str, Any]], None]) -> None:
+    def set_message_handler(self, handler: Callable[[dict[str, Any]], None]) -> None:
         """
         Set a custom message handler function.
-        
+
         Args:
             handler: Function that takes a message dictionary and processes it
         """
         self.message_handler = handler
 
-    def default_message_handler(self, message: Dict[str, Any]) -> None:
+    def default_message_handler(self, message: dict[str, Any]) -> None:
         """
         Default message handler that prints messages.
-        
+
         Args:
             message: Normalized message dictionary
         """
@@ -80,7 +80,7 @@ class MessageSubscriber:
     def start_receiving(self, timeout: Optional[float] = None) -> None:
         """
         Start receiving messages.
-        
+
         Args:
             timeout: Timeout in seconds (None for no timeout)
         """
@@ -106,9 +106,8 @@ class MessageSubscriber:
 
                     # Parse topic and message
                     if ' ' in message_str:
-                        topic, json_data = message_str.split(' ', 1)
+                        _, json_data = message_str.split(' ', 1)
                     else:
-                        topic = "unknown"
                         json_data = message_str
 
                     try:
@@ -139,7 +138,7 @@ class MessageSubscriber:
     def start_receiving_async(self, timeout: Optional[float] = None) -> None:
         """
         Start receiving messages in a separate thread.
-        
+
         Args:
             timeout: Timeout in seconds (None for no timeout)
         """
@@ -160,10 +159,10 @@ class MessageSubscriber:
             self.running = False
             print(f"Stopped receiving messages. Total received: {self.message_count}")
 
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """
         Get subscriber statistics.
-        
+
         Returns:
             Dictionary with subscriber statistics
         """
@@ -186,11 +185,11 @@ def create_subscriber(connect_address: str = "tcp://localhost:5555",
                      topics: Optional[list] = None) -> MessageSubscriber:
     """
     Factory function to create a message subscriber.
-    
+
     Args:
         connect_address: ZeroMQ connect address
         topics: List of topics to subscribe to
-        
+
     Returns:
         Configured MessageSubscriber instance
     """

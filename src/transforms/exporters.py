@@ -5,20 +5,20 @@ Export normalized messages to various formats.
 import csv
 import json
 from pathlib import Path
-from typing import Any, Dict, List, TextIO, Union
+from typing import Any, TextIO, Union
 
 
-def to_ndjson(messages: List[Dict[str, Any]], output: Union[str, Path, TextIO]) -> int:
+def to_ndjson(messages: list[dict[str, Any]], output: Union[str, Path, TextIO]) -> int:
     """
     Export normalized messages to NDJSON (Newline Delimited JSON) format.
-    
+
     Args:
         messages: List of normalized message dictionaries
         output: Output file path or file-like object
-        
+
     Returns:
         Number of messages exported
-        
+
     Example:
         >>> messages = [{"id": "1", "type": "test"}, {"id": "2", "type": "test2"}]
         >>> to_ndjson(messages, "output.ndjson")
@@ -35,7 +35,7 @@ def to_ndjson(messages: List[Dict[str, Any]], output: Union[str, Path, TextIO]) 
     return count
 
 
-def _write_ndjson(messages: List[Dict[str, Any]], file_obj: TextIO) -> int:
+def _write_ndjson(messages: list[dict[str, Any]], file_obj: TextIO) -> int:
     """Write messages to NDJSON format in the given file object."""
     count = 0
     for message in messages:
@@ -45,17 +45,17 @@ def _write_ndjson(messages: List[Dict[str, Any]], file_obj: TextIO) -> int:
     return count
 
 
-def to_csv(messages: List[Dict[str, Any]], output: Union[str, Path, TextIO]) -> int:
+def to_csv(messages: list[dict[str, Any]], output: Union[str, Path, TextIO]) -> int:
     """
     Export normalized messages to CSV format.
-    
+
     Args:
         messages: List of normalized message dictionaries
         output: Output file path or file-like object
-        
+
     Returns:
         Number of messages exported
-        
+
     Note:
         CSV export flattens nested structures and may lose some data complexity.
         Position and time fields are flattened to individual columns.
@@ -74,7 +74,7 @@ def to_csv(messages: List[Dict[str, Any]], output: Union[str, Path, TextIO]) -> 
     return count
 
 
-def _write_csv(messages: List[Dict[str, Any]], file_obj: TextIO) -> int:
+def _write_csv(messages: list[dict[str, Any]], file_obj: TextIO) -> int:
     """Write messages to CSV format in the given file object."""
     if not messages:
         return 0
@@ -127,21 +127,21 @@ def _write_csv(messages: List[Dict[str, Any]], file_obj: TextIO) -> int:
 
 
 def export_messages(
-    messages: List[Dict[str, Any]],
+    messages: list[dict[str, Any]],
     output: Union[str, Path],
     format_type: str = "json"
 ) -> int:
     """
     Export messages in the specified format.
-    
+
     Args:
         messages: List of normalized message dictionaries
         output: Output file path
         format_type: Export format ("json", "ndjson", "csv")
-        
+
     Returns:
         Number of messages exported
-        
+
     Raises:
         ValueError: If format_type is not supported
     """

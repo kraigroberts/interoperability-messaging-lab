@@ -3,9 +3,10 @@ Pydantic models for the Interoperability Messaging Lab API.
 """
 
 from datetime import datetime
-from typing import Dict, Any, List, Optional, Union
-from pydantic import BaseModel, Field, validator
 from enum import Enum
+from typing import Any, Optional, Union
+
+from pydantic import BaseModel, Field, validator
 
 
 class MessageFormat(str, Enum):
@@ -26,7 +27,7 @@ class ParseRequest(BaseModel):
     format: MessageFormat = Field(..., description="Message format to parse")
     content: str = Field(..., description="Base64-encoded message content")
     output_format: OutputFormat = Field(default=OutputFormat.JSON, description="Desired output format")
-    
+
     @validator('content')
     def validate_content(cls, v):
         """Validate that content is valid base64."""
@@ -42,7 +43,7 @@ class ParseResponse(BaseModel):
     """Response model for parsed messages."""
     success: bool = Field(..., description="Whether parsing was successful")
     message: str = Field(..., description="Human-readable message")
-    data: Optional[Dict[str, Any]] = Field(None, description="Parsed and normalized message data")
+    data: Optional[Union[dict[str, Any], str]] = Field(None, description="Parsed and normalized message data or formatted output")
     output_format: OutputFormat = Field(..., description="Output format used")
     processing_time_ms: float = Field(..., description="Processing time in milliseconds")
     timestamp: datetime = Field(default_factory=datetime.utcnow, description="Response timestamp")
@@ -76,7 +77,7 @@ class PCAPResponse(BaseModel):
     success: bool = Field(..., description="Whether processing was successful")
     message: str = Field(..., description="Human-readable message")
     payload_count: int = Field(..., description="Number of payloads extracted")
-    payloads: List[Dict[str, Any]] = Field(..., description="Extracted payload data")
+    payloads: list[dict[str, Any]] = Field(..., description="Extracted payload data")
     processing_time_ms: float = Field(..., description="Processing time in milliseconds")
     timestamp: datetime = Field(default_factory=datetime.utcnow, description="Response timestamp")
 
@@ -86,7 +87,7 @@ class HealthResponse(BaseModel):
     status: str = Field(..., description="Service status")
     version: str = Field(..., description="API version")
     timestamp: datetime = Field(default_factory=datetime.utcnow, description="Health check timestamp")
-    dependencies: Dict[str, str] = Field(..., description="Dependency status")
+    dependencies: dict[str, str] = Field(..., description="Dependency status")
     uptime_seconds: float = Field(..., description="Service uptime in seconds")
 
 
@@ -94,7 +95,7 @@ class ErrorResponse(BaseModel):
     """Standard error response model."""
     error: str = Field(..., description="Error type")
     message: str = Field(..., description="Human-readable error message")
-    details: Optional[Dict[str, Any]] = Field(None, description="Additional error details")
+    details: Optional[dict[str, Any]] = Field(None, description="Additional error details")
     timestamp: datetime = Field(default_factory=datetime.utcnow, description="Error timestamp")
     request_id: Optional[str] = Field(None, description="Request identifier for tracking")
 

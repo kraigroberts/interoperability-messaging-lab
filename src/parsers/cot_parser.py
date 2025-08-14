@@ -1,9 +1,9 @@
-from typing import Any, Dict
+from typing import Any
 
 from lxml import etree
 
 
-def parse_cot_xml(data: bytes) -> Dict[str, Any]:
+def parse_cot_xml(data: bytes) -> dict[str, Any]:
     """
     Minimal CoT parser: extracts key attributes from <event> and nested <point>.
     Returns a simple dict the normalizer can consume.

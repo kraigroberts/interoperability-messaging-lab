@@ -1,7 +1,7 @@
-from typing import Any, Dict
+from typing import Any
 
 
-def normalize_message(parsed: Dict[str, Any]) -> Dict[str, Any]:
+def normalize_message(parsed: dict[str, Any]) -> dict[str, Any]:
     """
     Convert parsed messages into a normalized schema we can reuse across formats.
     Supports:
