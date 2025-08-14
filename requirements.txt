@@ -4,3 +4,7 @@ scapy
 rich
 jsonschema
 pyzmq
+fastapi
+uvicorn[standard]
+pydantic
+httpx
