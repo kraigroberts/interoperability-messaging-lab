@@ -3,12 +3,11 @@ Schema validation for normalized tactical messages.
 """
 
 import json
-import os
 from pathlib import Path
-from typing import Dict, Any, Union
+from typing import Any, Dict
 
 try:
-    from jsonschema import validate, ValidationError
+    from jsonschema import ValidationError, validate
     from jsonschema.validators import Draft202012Validator
 except ImportError:
     # Graceful fallback if jsonschema is not available
@@ -20,11 +19,11 @@ except ImportError:
 def _load_schema() -> Dict[str, Any]:
     """Load the normalized message schema from the schema directory."""
     schema_path = Path(__file__).parent.parent.parent / "schema" / "normalized_message.schema.json"
-    
+
     if not schema_path.exists():
         raise FileNotFoundError(f"Schema file not found: {schema_path}")
-    
-    with open(schema_path, 'r') as f:
+
+    with open(schema_path) as f:
         return json.load(f)
 
 
@@ -44,7 +43,7 @@ def validate_normalized(obj: Dict[str, Any]) -> bool:
     """
     if validate is None:
         raise ImportError("jsonschema package is required for validation")
-    
+
     schema = _load_schema()
     validate(instance=obj, schema=schema, cls=Draft202012Validator)
     return True

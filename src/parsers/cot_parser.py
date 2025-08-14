@@ -1,5 +1,7 @@
+from typing import Any, Dict
+
 from lxml import etree
-from typing import Dict, Any
+
 
 def parse_cot_xml(data: bytes) -> Dict[str, Any]:
     """

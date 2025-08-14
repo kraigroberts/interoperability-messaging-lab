@@ -3,3 +3,4 @@ lxml
 scapy
 rich
 jsonschema
+pyzmq

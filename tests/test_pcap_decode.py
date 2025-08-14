@@ -1,5 +1,6 @@
 from pathlib import Path
-from scapy.all import Ether, IP, UDP, Raw, wrpcap  # type: ignore[import-untyped]
+
+from scapy.all import IP, UDP, Ether, Raw, wrpcap  # type: ignore[import-untyped]
 
 from src.binutils.pcap_extract import decode_pcap_payloads
 from tools.make_vmf_sample import make_sample

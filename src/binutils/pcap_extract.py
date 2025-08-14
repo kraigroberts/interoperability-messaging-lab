@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Union
 
-from scapy.all import rdpcap, Raw, TCP, UDP  # type: ignore[import-untyped]
+from scapy.all import TCP, UDP, Raw, rdpcap  # type: ignore[import-untyped]
 
 
 def decode_pcap_payloads(pcap_path: Union[str, Path], out_dir: Union[str, Path]) -> int:

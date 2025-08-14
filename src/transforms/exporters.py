@@ -5,7 +5,7 @@ Export normalized messages to various formats.
 import csv
 import json
 from pathlib import Path
-from typing import Dict, Any, List, Union, TextIO
+from typing import Any, Dict, List, TextIO, Union
 
 
 def to_ndjson(messages: List[Dict[str, Any]], output: Union[str, Path, TextIO]) -> int:
@@ -25,13 +25,13 @@ def to_ndjson(messages: List[Dict[str, Any]], output: Union[str, Path, TextIO]) 
         2
     """
     count = 0
-    
+
     if isinstance(output, (str, Path)):
         with open(output, 'w', encoding='utf-8') as f:
             count = _write_ndjson(messages, f)
     else:
         count = _write_ndjson(messages, output)
-    
+
     return count
 
 
@@ -62,15 +62,15 @@ def to_csv(messages: List[Dict[str, Any]], output: Union[str, Path, TextIO]) -> 
     """
     if not messages:
         return 0
-    
+
     count = 0
-    
+
     if isinstance(output, (str, Path)):
         with open(output, 'w', newline='', encoding='utf-8') as f:
             count = _write_csv(messages, f)
     else:
         count = _write_csv(messages, output)
-    
+
     return count
 
 
@@ -78,7 +78,7 @@ def _write_csv(messages: List[Dict[str, Any]], file_obj: TextIO) -> int:
     """Write messages to CSV format in the given file object."""
     if not messages:
         return 0
-    
+
     # Flatten the nested structure for CSV
     flattened_messages = []
     for msg in messages:
@@ -97,38 +97,38 @@ def _write_csv(messages: List[Dict[str, Any]], file_obj: TextIO) -> int:
             'position_ce': msg.get('position', {}).get('ce'),
             'position_le': msg.get('position', {}).get('le'),
         }
-        
+
         # Add detail fields (flattened)
         detail = msg.get('detail', {})
         for key, value in detail.items():
             flat[f'detail_{key}'] = value
-        
+
         flattened_messages.append(flat)
-    
+
     # Get all possible column names
     all_columns = set()
     for msg in flattened_messages:
         all_columns.update(msg.keys())
-    
+
     # Sort columns for consistent output
     columns = sorted(all_columns)
-    
+
     writer = csv.DictWriter(file_obj, fieldnames=columns)
     writer.writeheader()
-    
+
     count = 0
     for msg in flattened_messages:
         # Ensure all columns are present (fill missing with None)
         row = {col: msg.get(col) for col in columns}
         writer.writerow(row)
         count += 1
-    
+
     return count
 
 
 def export_messages(
-    messages: List[Dict[str, Any]], 
-    output: Union[str, Path], 
+    messages: List[Dict[str, Any]],
+    output: Union[str, Path],
     format_type: str = "json"
 ) -> int:
     """
@@ -146,7 +146,7 @@ def export_messages(
         ValueError: If format_type is not supported
     """
     format_type = format_type.lower()
-    
+
     if format_type == "json":
         with open(output, 'w', encoding='utf-8') as f:
             json.dump(messages, f, indent=2, ensure_ascii=False)

@@ -1,5 +1,5 @@
 import struct
-from typing import Dict, Any
+from typing import Any, Dict
 
 """
 Minimal VMF-like binary parser for demonstration and testing.
