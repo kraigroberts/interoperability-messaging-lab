@@ -4,9 +4,19 @@ on:
   push:
     branches:
       - main
+    paths:
+      - tools/make_vmf_sample.py
+      - src/parsers/vmf_parser.py
+      - src/transforms/normalize_schema.py
+      - .github/workflows/gen-vmf-sample.yml
   pull_request:
     branches:
       - main
+    paths:
+      - tools/make_vmf_sample.py
+      - src/parsers/vmf_parser.py
+      - src/transforms/normalize_schema.py
+      - .github/workflows/gen-vmf-sample.yml
   workflow_dispatch:
 
 permissions:
