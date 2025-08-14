@@ -10,6 +10,7 @@ from typing import Any, Union
 
 import zmq
 
+# Import with fallback for different execution contexts
 try:
     from ..parsers.cot_parser import parse_cot_xml
     from ..parsers.vmf_parser import parse_vmf_binary
@@ -17,10 +18,10 @@ try:
     from ..transforms.validate import validate_normalized
 except ImportError:
     # Fallback for when running as script
-    from parsers.cot_parser import parse_cot_xml
-    from parsers.vmf_parser import parse_vmf_binary
-    from transforms.normalize_schema import normalize_message
-    from transforms.validate import validate_normalized
+    from parsers.cot_parser import parse_cot_xml  # type: ignore
+    from parsers.vmf_parser import parse_vmf_binary  # type: ignore
+    from transforms.normalize_schema import normalize_message  # type: ignore
+    from transforms.validate import validate_normalized  # type: ignore
 
 
 class MessagePublisher:
@@ -143,7 +144,7 @@ class MessagePublisher:
         self.running = True
         self.stop_event.clear()
 
-        def stream_worker():
+        def stream_worker() -> None:
             while not self.stop_event.is_set():
                 for file_path in file_paths:
                     if self.stop_event.is_set():

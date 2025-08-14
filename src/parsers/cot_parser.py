@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Union
 
 from lxml import etree
 
@@ -42,7 +42,7 @@ def parse_cot_xml(data: bytes) -> dict[str, Any]:
 
     return {"format": "cot", "raw": event}
 
-def safe_float(x):
+def safe_float(x: Any) -> Union[float, None]:
     try:
         return float(x) if x is not None else None
     except Exception:

@@ -17,13 +17,13 @@ try:
     from .transforms.normalize_schema import normalize_message
 except ImportError:
     # Fallback for when running as script
-    from binutils.pcap_extract import decode_pcap_payloads
-    from parsers.cot_parser import parse_cot_xml
-    from parsers.vmf_parser import parse_vmf_binary
-    from stream.pub import create_publisher
-    from stream.sub import create_subscriber
-    from transforms.exporters import export_messages
-    from transforms.normalize_schema import normalize_message
+    from binutils.pcap_extract import decode_pcap_payloads  # type: ignore
+    from parsers.cot_parser import parse_cot_xml  # type: ignore
+    from parsers.vmf_parser import parse_vmf_binary  # type: ignore
+    from stream.pub import create_publisher  # type: ignore
+    from stream.sub import create_subscriber  # type: ignore
+    from transforms.exporters import export_messages  # type: ignore
+    from transforms.normalize_schema import normalize_message  # type: ignore
 
 
 def cmd_parse(args: argparse.Namespace) -> None:
@@ -105,7 +105,7 @@ def cmd_stream_pub(args: argparse.Namespace) -> None:
             # Start continuous streaming
             print("[blue]Starting[/blue] continuous streaming mode...")
             file_paths = [Path(f) for f in args.files]
-            publisher.start_streaming(file_paths, args.format, args.delay)
+            publisher.start_streaming(file_paths, args.format, args.delay)  # type: ignore
 
             try:
                 print(f"[green]🔄 Streaming[/green] messages with {args.delay}s delay...")
@@ -120,7 +120,7 @@ def cmd_stream_pub(args: argparse.Namespace) -> None:
             # Publish once
             print("[blue]Publishing[/blue] messages once...")
             file_paths = [Path(f) for f in args.files]
-            count = publisher.publish_from_files(file_paths, args.format, args.delay)
+            count = publisher.publish_from_files(file_paths, args.format, args.delay)  # type: ignore
             print(f"[green]✅ Published[/green] {count} message(s)")
 
         publisher.close()
@@ -200,25 +200,25 @@ def cmd_status(args: argparse.Namespace) -> None:
     print("\n[blue]Dependencies[/blue]:")
     try:
         import lxml
-        print(f"[green]✅ lxml[/green]: {lxml.__version__}")
+        print(f"[green]✅ lxml[/green]: {getattr(lxml, '__version__', 'unknown')}")
     except ImportError:
         print("[red]❌ lxml[/red]: Not installed")
 
     try:
         import scapy
-        print(f"[green]✅ scapy[/green]: {scapy.__version__}")
+        print(f"[green]✅ scapy[/green]: {getattr(scapy, '__version__', 'unknown')}")
     except ImportError:
         print("[red]❌ scapy[/red]: Not installed")
 
     try:
         import zmq
-        print(f"[green]✅ pyzmq[/green]: {zmq.__version__}")
+        print(f"[green]✅ pyzmq[/green]: {getattr(zmq, '__version__', 'unknown')}")
     except ImportError:
         print("[red]❌ pyzmq[/red]: Not installed")
 
     try:
         import jsonschema
-        print(f"[green]✅ jsonschema[/green]: {jsonschema.__version__}")
+        print(f"[green]✅ jsonschema[/green]: {getattr(jsonschema, '__version__', 'unknown')}")
     except ImportError:
         print("[red]❌ jsonschema[/red]: Not installed")
 
@@ -281,7 +281,7 @@ def cmd_interactive(args: argparse.Namespace) -> None:
             break
 
 
-def print_help():
+def print_help() -> None:
     """Print interactive shell help."""
     print("\n[blue]Available Commands:[/blue]")
     print("  help     - Show this help message")
@@ -291,7 +291,7 @@ def print_help():
     print("  quit     - Exit interactive shell")
 
 
-def show_samples():
+def show_samples() -> None:
     """Show available sample files."""
     print("\n[blue]Sample Files:[/blue]")
     sample_dir = Path("data/samples")
@@ -304,7 +304,7 @@ def show_samples():
         print("[yellow]No sample directory found[/yellow]")
 
 
-def show_schema():
+def show_schema() -> None:
     """Show schema information."""
     print("\n[blue]Schema Information:[/blue]")
     schema_file = Path("schema/normalized_message.schema.json")
@@ -319,7 +319,7 @@ def show_schema():
         print("[red]Schema file not found[/red]")
 
 
-def main():
+def main() -> None:
     ap = argparse.ArgumentParser(
         prog="interop-cli",
         description="Interoperability Messaging Lab CLI - Tactical message parsing, validation, and streaming",

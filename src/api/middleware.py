@@ -26,7 +26,7 @@ class RequestIdMiddleware(BaseHTTPMiddleware):
         request.state.request_id = request_id
 
         # Add to response headers
-        response = await call_next(request)
+        response: Response = await call_next(request)
         response.headers["X-Request-ID"] = request_id
 
         return response
@@ -43,7 +43,7 @@ class TimingMiddleware(BaseHTTPMiddleware):
         start_time = time.time()
 
         # Process request
-        response = await call_next(request)
+        response: Response = await call_next(request)
 
         # Calculate processing time
         processing_time = time.time() - start_time
@@ -73,7 +73,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
 
         try:
             # Process request
-            response = await call_next(request)
+            response: Response = await call_next(request)
 
             # Log successful response
             print(f"[{request_id}] {request.method} {request.url.path} - {response.status_code} - Completed")

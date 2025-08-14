@@ -4,6 +4,7 @@ Schema validation for normalized tactical messages.
 
 import json
 from pathlib import Path
+from typing import Any
 
 try:
     from jsonschema import ValidationError, validate
@@ -15,7 +16,7 @@ except ImportError:
     Draft202012Validator = None
 
 
-def _load_schema() -> dict:
+def _load_schema() -> dict[str, Any]:
     """Load the normalized message schema from the schema directory."""
     schema_path = Path(__file__).parent.parent.parent / "schema" / "normalized_message.schema.json"
 
@@ -23,7 +24,7 @@ def _load_schema() -> dict:
         raise FileNotFoundError(f"Schema file not found: {schema_path}")
 
     with open(schema_path) as f:
-        return json.load(f)
+        return json.load(f)  # type: ignore[no-any-return]
 
 
 def validate_normalized(obj: dict) -> bool:

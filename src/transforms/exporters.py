@@ -106,7 +106,7 @@ def _write_csv(messages: list[dict[str, Any]], file_obj: TextIO) -> int:
         flattened_messages.append(flat)
 
     # Get all possible column names
-    all_columns = set()
+    all_columns: set[str] = set()
     for msg in flattened_messages:
         all_columns.update(msg.keys())
 

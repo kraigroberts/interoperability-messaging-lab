@@ -146,7 +146,7 @@ class MessageSubscriber:
             print("Subscriber is already running")
             return
 
-        def receive_worker():
+        def receive_worker() -> None:
             self.start_receiving(timeout)
 
         self.receive_thread = Thread(target=receive_worker, daemon=True)

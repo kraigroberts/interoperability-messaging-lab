@@ -29,7 +29,7 @@ class ParseRequest(BaseModel):
     output_format: OutputFormat = Field(default=OutputFormat.JSON, description="Desired output format")
 
     @validator('content')
-    def validate_content(cls, v):
+    def validate_content(cls, v: str) -> str:
         """Validate that content is valid base64."""
         try:
             import base64

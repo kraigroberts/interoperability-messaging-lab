@@ -8,7 +8,7 @@ import csv
 import io
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Union
 
 # Import our existing business logic
 try:
@@ -19,11 +19,11 @@ try:
     from ..transforms.normalize_schema import normalize_message
 except ImportError:
     # Fallback for when running as package
-    from binutils.pcap_extract import decode_pcap_payloads
-    from parsers.cot_parser import parse_cot_xml
-    from parsers.vmf_parser import parse_vmf_binary
-    from stream.pub import create_publisher
-    from transforms.normalize_schema import normalize_message
+    from binutils.pcap_extract import decode_pcap_payloads  # type: ignore
+    from parsers.cot_parser import parse_cot_xml  # type: ignore
+    from parsers.vmf_parser import parse_vmf_binary  # type: ignore
+    from stream.pub import create_publisher  # type: ignore
+    from transforms.normalize_schema import normalize_message  # type: ignore
 
 
 class MessageService:
@@ -103,10 +103,10 @@ class MessageService:
 class StreamingService:
     """Service for ZeroMQ message streaming."""
 
-    def __init__(self):
-        self.publishers = {}  # Cache publishers by address
+    def __init__(self) -> None:
+        self.publishers: dict[str, Any] = {}  # Cache publishers by address
 
-    def publish_message(self, message: dict[str, Any], topic: str = "tactical", delay_ms: int = 1000):
+    def publish_message(self, message: dict[str, Any], topic: str = "tactical", delay_ms: int = 1000) -> None:
         """Publish a message to ZeroMQ topic."""
         try:
             # Use default publisher address
@@ -123,13 +123,13 @@ class StreamingService:
         except Exception as e:
             print(f"Error publishing message: {e}")
 
-    def _get_publisher(self, address: str):
+    def _get_publisher(self, address: str) -> Any:
         """Get or create a publisher for the given address."""
         if address not in self.publishers:
             self.publishers[address] = create_publisher(address)
         return self.publishers[address]
 
-    def close_all(self):
+    def close_all(self) -> None:
         """Close all publishers."""
         for publisher in self.publishers.values():
             try:
@@ -168,7 +168,7 @@ class PCAPService:
 
             return payloads
 
-    def convert_payloads(self, payloads: list[dict[str, Any]], output_format: str) -> Any:
+    def convert_payloads(self, payloads: list[dict[str, Any]], output_format: str) -> Union[list[dict[str, Any]], str]:
         """Convert payloads to requested output format."""
         if output_format == "json":
             return payloads
