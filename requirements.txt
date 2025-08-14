@@ -1,1 +1,4 @@
-# Placeholder - will add content later
+# Runtime dependencies for interoperability-messaging-lab
+lxml
+scapy
+rich
