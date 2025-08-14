@@ -134,7 +134,7 @@ class StreamingService:
         for publisher in self.publishers.values():
             try:
                 publisher.close()
-            except:
+            except Exception:
                 pass
         self.publishers.clear()
 

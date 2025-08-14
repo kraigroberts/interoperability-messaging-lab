@@ -38,7 +38,7 @@ def parse_cot_xml(data: bytes) -> dict[str, Any]:
     # <detail>…</detail> (we just capture attributes of the first level)
     detail = root.find("detail")
     if detail is not None:
-        event["detail"] = {k: v for k, v in detail.attrib.items()}
+        event["detail"] = dict(detail.attrib.items())
 
     return {"format": "cot", "raw": event}
 

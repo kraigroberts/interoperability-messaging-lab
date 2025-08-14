@@ -36,7 +36,7 @@ class ParseRequest(BaseModel):
             base64.b64decode(v)
             return v
         except Exception:
-            raise ValueError("Content must be valid base64-encoded data")
+            raise ValueError("Content must be valid base64-encoded data") from None
 
 
 class ParseResponse(BaseModel):

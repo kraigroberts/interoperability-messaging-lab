@@ -99,25 +99,25 @@ async def health_check():
     # Check dependencies
     dependencies = {}
     try:
-        import lxml
+        import lxml  # noqa: F401
         dependencies["lxml"] = "healthy"
     except ImportError:
         dependencies["lxml"] = "unavailable"
 
     try:
-        import scapy
+        import scapy  # noqa: F401
         dependencies["scapy"] = "healthy"
     except ImportError:
         dependencies["scapy"] = "unavailable"
 
     try:
-        import zmq
+        import zmq  # noqa: F401
         dependencies["pyzmq"] = "healthy"
     except ImportError:
         dependencies["pyzmq"] = "unavailable"
 
     try:
-        import jsonschema
+        import jsonschema  # noqa: F401
         dependencies["jsonschema"] = "healthy"
     except ImportError:
         dependencies["jsonschema"] = "unavailable"
@@ -170,7 +170,7 @@ async def parse_message(request: ParseRequest):
 
     except Exception as e:
         message_stats["failed_messages"] += 1
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @app.post("/api/v1/stream", response_model=StreamResponse)
@@ -209,7 +209,7 @@ async def stream_message(request: StreamRequest, background_tasks: BackgroundTas
         )
 
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @app.post("/api/v1/pcap", response_model=PCAPResponse)
@@ -248,7 +248,7 @@ async def process_pcap(request: PCAPRequest):
             os.unlink(temp_file_path)
 
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @app.get("/api/v1/stats", response_model=MessageStats)
