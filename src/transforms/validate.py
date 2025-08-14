@@ -11,9 +11,9 @@ try:
     from jsonschema.validators import Draft202012Validator
 except ImportError:
     # Graceful fallback if jsonschema is not available
-    validate = None
-    ValidationError = Exception
-    Draft202012Validator = None
+    validate = None  # type: ignore
+    ValidationError = Exception  # type: ignore
+    Draft202012Validator = None  # type: ignore
 
 
 def _load_schema() -> dict[str, Any]:

@@ -1,8 +1,8 @@
 from pathlib import Path
 from typing import Union
 
-from scapy.layers.all import Raw
 from scapy.layers.inet import TCP, UDP
+from scapy.packet import Raw
 from scapy.utils import rdpcap
 
 
