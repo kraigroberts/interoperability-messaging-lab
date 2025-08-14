@@ -1,1 +1,5 @@
-<root>placeholder COT XML</root>
+<event version="2.0" uid="EXAMPLE-UID-1234" type="a-f-A-M-F" how="m-g"
+       time="2025-08-14T12:00:00Z" start="2025-08-14T12:00:00Z" stale="2025-08-14T13:00:00Z">
+  <point lat="38.7000" lon="-77.2000" hae="100.0" ce="30.0" le="10.0"/>
+  <detail callsign="VIKING11"/>
+</event>
