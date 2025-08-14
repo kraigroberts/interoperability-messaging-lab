@@ -39,11 +39,36 @@ These commands will place output files in `data/samples/`.
 ## Usage
 ```bash
 # Parse a VMF binary file and convert to JSON
-python src/cli.py parse-vmf data/samples/sample_vmf.bin --to json
+python src/cli.py parse vmf --in data/samples/sample_vmf.bin --out output.json
 
-# Normalize a CoT XML file to the shared schema
-python src/cli.py normalize-cot data/samples/sample_cot.xml
+# Parse a CoT XML file and normalize to the shared schema
+python src/cli.py parse cot --in data/samples/sample_cot.xml --out output.json
+
+# Export to different formats (JSON, NDJSON, CSV)
+python src/cli.py parse cot --in data/samples/sample_cot.xml --out output.ndjson --out-format ndjson
+python src/cli.py parse vmf --in data/samples/sample_vmf.bin --out output.csv --out-format csv
+
+# Decode PCAP and extract payloads
+python src/cli.py pcap decode --pcap data/pcaps/example_capture.pcap.txt --out output_dir
 ```
+
+## Schema
+The lab uses a normalized message schema (`schema/normalized_message.schema.json`) that provides a consistent format across different tactical message types:
+
+- **CoT (XML)**: Events with position, time, and metadata
+- **VMF (Binary)**: Binary messages with coordinates and timestamps
+- **Validation**: All normalized messages are validated against the JSON Schema
+
+The schema enforces required fields, data types, and rejects additional properties for data integrity.
+
+## Export Formats
+The CLI supports multiple export formats for normalized messages:
+
+- **JSON**: Standard JSON with pretty-printing (default)
+- **NDJSON**: Newline-delimited JSON for streaming and processing
+- **CSV**: Flattened CSV format for spreadsheet analysis
+
+All exports maintain data integrity while providing format flexibility for different use cases.
 
 ## Contributing
 1. Fork the repo
