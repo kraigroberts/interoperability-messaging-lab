@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # Publisher service for streaming messages
+  publisher:
+    build: .
+    container_name: interop-publisher
+    volumes:
+      - ./data:/home/interop/data:ro
+      - ./src:/home/interop/src:ro
+    working_dir: /home/interop
+    command: >
+      interop-cli stream pub 
+      --in data/samples/sample_cot.xml 
+      --format cot 
+      --stream 
+      --delay 5.0
+    ports:
+      - "5555:5555"
+    networks:
+      - interop-net
+    restart: unless-stopped
+
+  # Subscriber service for receiving messages
+  subscriber:
+    build: .
+    container_name: interop-subscriber
+    volumes:
+      - ./data:/home/interop/data:ro
+    working_dir: /home/interop
+    command: >
+      interop-cli stream sub 
+      --connect tcp://publisher:5555
+    depends_on:
+      - publisher
+    networks:
+      - interop-net
+    restart: unless-stopped
+
+  # CLI service for interactive use
+  cli:
+    build: .
+    container_name: interop-cli
+    volumes:
+      - ./data:/home/interop/data:rw
+      - ./src:/home/interop/src:ro
+    working_dir: /home/interop
+    command: interop-cli --help
+    depends_on:
+      - publisher
+    networks:
+      - interop-net
+    stdin_open: true
+    tty: true
+
+networks:
+  interop-net:
+    driver: bridge
+
+volumes:
+  data:
+    driver: local

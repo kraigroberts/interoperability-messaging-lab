@@ -1,7 +1,9 @@
-from lxml import etree
-from typing import Dict, Any
+from typing import Any, Union
 
-def parse_cot_xml(data: bytes) -> Dict[str, Any]:
+from lxml import etree
+
+
+def parse_cot_xml(data: bytes) -> dict[str, Any]:
     """
     Minimal CoT parser: extracts key attributes from <event> and nested <point>.
     Returns a simple dict the normalizer can consume.
@@ -36,11 +38,11 @@ def parse_cot_xml(data: bytes) -> Dict[str, Any]:
     # <detail>…</detail> (we just capture attributes of the first level)
     detail = root.find("detail")
     if detail is not None:
-        event["detail"] = {k: v for k, v in detail.attrib.items()}
+        event["detail"] = dict(detail.attrib.items())
 
     return {"format": "cot", "raw": event}
 
-def safe_float(x):
+def safe_float(x: Any) -> Union[float, None]:
     try:
         return float(x) if x is not None else None
     except Exception:

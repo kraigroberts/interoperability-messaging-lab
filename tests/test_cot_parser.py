@@ -1,6 +1,7 @@
 from src.parsers.cot_parser import parse_cot_xml
 from src.transforms.normalize_schema import normalize_message
 
+
 def test_cot_parse_and_normalize():
     sample = b"""
     <event version="2.0" uid="T-123" type="a-f-A" how="m-g"
