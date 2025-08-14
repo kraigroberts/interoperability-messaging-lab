@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/kraigroberts/interoperability-messaging-lab/schema/normalized_message.schema.json",
+  "title": "Normalized Message Schema",
+  "description": "Schema for normalized tactical messages across different source formats (CoT, VMF)",
+  "type": "object",
+  "required": ["schema_version", "source_format", "type", "time", "position"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$",
+      "description": "Version of the normalized schema"
+    },
+    "source_format": {
+      "type": "string",
+      "enum": ["cot", "vmf"],
+      "description": "Original format of the message"
+    },
+    "id": {
+      "oneOf": [
+        {"type": "string"},
+        {"type": "null"}
+      ],
+      "description": "Unique identifier for the message/entity"
+    },
+    "type": {
+      "type": "string",
+      "description": "Message type or event type"
+    },
+    "how": {
+      "oneOf": [
+        {"type": "string"},
+        {"type": "null"}
+      ],
+      "description": "How the position was determined (CoT specific)"
+    },
+    "time": {
+      "type": "object",
+      "required": ["reported"],
+      "properties": {
+        "reported": {
+          "oneOf": [
+            {"type": "string"},
+            {"type": "number"},
+            {"type": "null"}
+          ],
+          "description": "When the event was reported"
+        },
+        "start": {
+          "oneOf": [
+            {"type": "string"},
+            {"type": "number"},
+            {"type": "null"}
+          ],
+          "description": "When the event started"
+        },
+        "stale": {
+          "oneOf": [
+            {"type": "string"},
+            {"type": "number"},
+            {"type": "null"}
+          ],
+          "description": "When the event becomes stale"
+        }
+      },
+      "additionalProperties": false
+    },
+    "position": {
+      "type": "object",
+      "required": ["lat", "lon"],
+      "properties": {
+        "lat": {
+          "oneOf": [
+            {"type": "number"},
+            {"type": "null"}
+          ],
+          "description": "Latitude coordinate"
+        },
+        "lon": {
+          "oneOf": [
+            {"type": "number"},
+            {"type": "null"}
+          ],
+          "description": "Longitude coordinate"
+        },
+        "hae": {
+          "oneOf": [
+            {"type": "number"},
+            {"type": "null"}
+          ],
+          "description": "Height above ellipsoid"
+        },
+        "ce": {
+          "oneOf": [
+            {"type": "number"},
+            {"type": "null"}
+          ],
+          "description": "Circular error"
+        },
+        "le": {
+          "oneOf": [
+            {"type": "number"},
+            {"type": "null"}
+          ],
+          "description": "Linear error"
+        }
+      },
+      "additionalProperties": false
+    },
+    "detail": {
+      "type": "object",
+      "description": "Additional message details",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

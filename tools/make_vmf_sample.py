@@ -15,6 +15,7 @@ Total bytes: 30
 import struct
 import time
 from pathlib import Path
+from typing import Optional
 
 _HEADER_FMT = "<4sHddQ"
 
@@ -22,7 +23,7 @@ def make_sample(
     msg_type: int = 42,
     lat: float = 38.7000,
     lon: float = -77.2000,
-    ts: int | None = None,
+    ts: Optional[int] = None,
 ) -> bytes:
     if ts is None:
         ts = int(time.time())

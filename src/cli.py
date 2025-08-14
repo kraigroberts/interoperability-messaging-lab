@@ -4,11 +4,12 @@ import json
 from pathlib import Path
 from rich import print
 
-from src.parsers.cot_parser import parse_cot_xml
-from src.parsers.vmf_parser import parse_vmf_binary
-from src.transforms.normalize_schema import normalize_message
-from src.transforms.to_json import dump_json
-from src.binutils.pcap_extract import decode_pcap_payloads
+from parsers.cot_parser import parse_cot_xml
+from parsers.vmf_parser import parse_vmf_binary
+from transforms.normalize_schema import normalize_message
+from transforms.to_json import dump_json
+from transforms.exporters import export_messages
+from binutils.pcap_extract import decode_pcap_payloads
 
 
 def cmd_parse(args: argparse.Namespace) -> None:
@@ -28,8 +29,10 @@ def cmd_parse(args: argparse.Namespace) -> None:
     normalized = normalize_message(parsed)
 
     if args.out:
-        dump_json(normalized, args.out)
-        print(f"[green]Wrote[/green] {args.out}")
+        # Use specified output format or default to JSON
+        output_format = getattr(args, 'out_format', 'json')
+        count = export_messages([normalized], args.out, output_format)
+        print(f"[green]Wrote[/green] {args.out} ({count} message, {output_format} format)")
     else:
         print(json.dumps(normalized, indent=2))
 
@@ -53,7 +56,9 @@ def main():
     ap_parse = sub.add_parser("parse", help="Parse a message file")
     ap_parse.add_argument("format", choices=["cot", "vmf"], help="message format")
     ap_parse.add_argument("--in", dest="infile", required=True, help="input file path")
-    ap_parse.add_argument("--out", dest="out", help="output JSON path (optional)")
+    ap_parse.add_argument("--out", dest="out", help="output file path (optional)")
+    ap_parse.add_argument("--out-format", dest="out_format", choices=["json", "ndjson", "csv"], 
+                         default="json", help="output format (default: json)")
     ap_parse.set_defaults(func=cmd_parse)
 
     # pcap subcommand
